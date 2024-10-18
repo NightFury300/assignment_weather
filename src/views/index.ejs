@@ -79,7 +79,7 @@
             <input type="text" name="ruleId" > 
             <button type="submit" style="margin-left: 10px;">Evaluate</button>
             <%if (locals.data !== undefined && locals.data.result !== undefined) {%>
-                <%if (data.result) { %>
+                <%if (data.result == "true") { %>
                     <h2 style="color: #218838;"><%=data.result %></h2>
                 <%}
                 else { %>
