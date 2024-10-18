@@ -32,7 +32,9 @@ To run this application, the following dependencies are required:
 ## Steps To Step Up
 
 1.Clone the repository using
-
+```sh
+git clone https://github.com/NightFury300/assignment_ast.git
+```
 2.Use Command to change directory to assignment_ast folder which contains the src folder
 ```sh
 cd assignment_ast
