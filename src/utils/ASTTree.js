@@ -25,7 +25,7 @@ class ASTTree {
                     token = '';
                 }
                 if (char !== ' ') tokens.push(char);
-            } else {
+            } else if(char !== '"' && char !== `'`){
                 token += char;
             }
         }
@@ -110,8 +110,11 @@ function evaluateCondition(condition, data) {
       case '<=':
         return value <= parsedTarget;
       case '=':
+        
       case '==':
-        return value === parsedTarget;
+        if(isNaN(parsedTarget) && isNaN(value))
+            return value.toLowerCase() === parsedTarget.toLowerCase();
+        return value == parsedTarget;
       default:
         throw new APIError(400,`Unknown operator: ${operator}`);
     }

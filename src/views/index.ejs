@@ -27,6 +27,14 @@
             margin: 10px 0; /* Margin between items */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Slight shadow */
         }
+        h1 {
+            font-family: 'Arial', sans-serif;
+            font-size: 2.5em;
+            color: #343a40; /* Dark grey color */
+            text-align: center; /* Center the heading */
+            margin-bottom: 20px; /* Space below the heading */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Add a slight shadow */
+        }
     </style>
 </head>
 <body>
@@ -43,6 +51,10 @@
                             <%= rule.rule %> 
                             <input type="checkbox" name="rules[]" value="<%= rule._id %>">
                             <p>Rule ID: <%=rule._id %></p>
+                            <textarea id="rule-ast-<%= rule._id %>" style="display:none;"><%= JSON.stringify(rule.ast) %></textarea>
+                            <button type="button" onclick="copyToClipboard('<%= JSON.stringify(rule.ast)%>')">
+                                Copy AST Tree JSON to Clipboard
+                            </button>
                         </li>
                     <% }); %>
                 <% } %>
@@ -67,9 +79,23 @@
             <input type="text" name="ruleId" > 
             <button type="submit" style="margin-left: 10px;">Evaluate</button>
             <%if (locals.data !== undefined && locals.data.result !== undefined) {%>
-                <h4><%=data.result %></h4>
+                <%if (data.result) { %>
+                    <h2 style="color: #218838;"><%=data.result %></h2>
+                <%}
+                else { %>
+                    <h2 style="color: #dc3545;"><%=data.result %></h2>
+                <% } %>
             <%}%>
         </form>
     </div>
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('AST JSON copied to clipboard. ');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
 </body>
 </html>
