@@ -3,9 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Weather API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; 
+            background-color: #f0f0f0; 
+            color: #333; 
+            margin: 0; 
+            padding: 20px; 
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            max-width: 600px; 
+            margin: auto; 
+        }
+
+        .city-card {
+            border: 1px solid #ccc; 
+            padding: 15px; 
+            border-radius: 8px; 
+            background-color: #fff; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            transition: transform 0.2s; 
+        }
+
+        .city-card:hover {
+            transform: translateY(-3px); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
+        }
+
+        h2 {
+            margin: 0 0 10px; 
+            font-size: 24px; 
+            color: #2c3e50; 
+        }
+
+        p {
+            margin: 5px 0; 
+            font-size: 16px; 
+            color: #555; 
+        }
+
+        strong {
+            color: #e74c3c; 
+        }
+
+        #unitToggle {
+            margin-bottom: 15px; 
+            padding: 10px; 
+            background-color: #3498db; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+
+        #unitToggle:hover {
+            background-color: #2980b9; 
+        }
+    </style>
 </head>
 <body>
-    
+    <button id="unitToggle">Switch to Fahrenheit</button>
+    <div id="container">
+        <div class="city-card" id="Delhi"></div>
+        <div class="city-card" id="Mumbai"></div>
+        <div class="city-card" id="Chennai"></div>
+        <div class="city-card" id="Kolkata"></div>
+        <div class="city-card" id="Bangalore"></div>
+        <div class="city-card" id="Hyderabad"></div>
+    </div>
+
+    <script>
+        let currentUnit = 'Celsius';
+        updateWeatherData();
+        setInterval(updateWeatherData, 300000);
+
+        async function getData() {
+            const cities = ['Delhi', 'Chennai', 'Mumbai', 'Bangalore', 'Kolkata', 'Hyderabad'];
+            let queryString = "";
+            let index = 0;
+            for (const element of cities) {                
+                queryString += "cities=" + element;
+                if (index != cities.length - 1)
+                    queryString += "&";
+                index++;
+            }
+            
+            const response = await fetch(`/api/v1/users/get-weather-data?${queryString}`);
+            const data = await response.json();
+            return data;
+        }
+
+        async function updateWeatherData() {
+            const apiRes = await getData();
+            const citiesData = apiRes.data;
+            formatWeatherData(citiesData);
+            saveWeatherData(citiesData);
+        }
+        function formatWeatherData(citiesData){
+            citiesData.forEach(cityData => {
+                const lastUpdatedAtString = getLastUpdatedAt(cityData.data.dt);
+                const temp = convertTemperature(currentUnit, cityData.data.temp);
+                const feels_like = convertTemperature(currentUnit, cityData.data.feels_like);
+                document.getElementById(cityData.name).innerHTML = 
+                `<h2>${cityData.name}</h2>
+                <p>Temperature: <strong>${temp}</strong></p>
+                <p>Feels Like: <strong>${feels_like}</strong></p>
+                <p>Condition: <strong>${cityData.data.main}</strong></p>
+                <p>Last Updated At: <strong>${lastUpdatedAtString}</strong></p>`;
+            });
+        }
+        function convertTemperature(unit, value) {
+            if (!['Celsius', 'Fahrenheit'].includes(unit))
+                throw Error("Invalid Temperature Unit Provided");
+            if (unit === 'Celsius') {
+                return `${Math.round(value - 273.15)} °C`;
+            } else {
+                return `${Math.round((value - 273.15) * 9/5 + 32)} °F`;
+            }
+        }
+
+        function getLastUpdatedAt(dtVal) {
+            const date = new Date(dtVal * 1000);
+            const options = {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            return date.toLocaleString('en-US', options);
+        }
+
+        async function saveWeatherData(citiesData){
+            console.log(JSON.stringify(citiesData));
+            
+            const response = await fetch(`/api/v1/users/save-weather-data`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(citiesData)
+            })
+            if(!response)
+                throw new Error("Something went wrong.")
+        }
+
+        document.getElementById('unitToggle').addEventListener('click', function() {
+            currentUnit = currentUnit === 'Celsius' ? 'Fahrenheit' : 'Celsius';
+            this.textContent = `Switch to ${currentUnit === 'Celsius' ? 'Fahrenheit' : 'Celsius'}`;
+            updateWeatherData();
+        });
+    </script>
 </body>
 </html>
