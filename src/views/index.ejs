@@ -98,11 +98,12 @@
             return data;
         }
 
-        async function updateWeatherData() {
+        async function updateWeatherData(save = true) {
             const apiRes = await getData();
             const citiesData = apiRes.data;
             formatWeatherData(citiesData);
-            saveWeatherData(citiesData);
+            if(save)
+                saveWeatherData(citiesData);
         }
         function formatWeatherData(citiesData){
             citiesData.forEach(cityData => {
@@ -143,7 +144,6 @@
         }
 
         async function saveWeatherData(citiesData){
-            console.log(JSON.stringify(citiesData));
             
             const response = await fetch(`/api/v1/users/save-weather-data`,{
                 method: 'POST',
@@ -159,7 +159,7 @@
         document.getElementById('unitToggle').addEventListener('click', function() {
             currentUnit = currentUnit === 'Celsius' ? 'Fahrenheit' : 'Celsius';
             this.textContent = `Switch to ${currentUnit === 'Celsius' ? 'Fahrenheit' : 'Celsius'}`;
-            updateWeatherData();
+            updateWeatherData(false);
         });
     </script>
 </body>

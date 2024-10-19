@@ -1,10 +1,8 @@
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {APIError} from "../utils/APIError.js"
 import {APIResponse} from "../utils/APIResponse.js"
-import { getWeatherData,extractWeatherParameters } from "../utils/weatherUtils.js"
+import { getWeatherData,extractWeatherParameters, rollUpWeatherData } from "../utils/weatherUtils.js"
 import { WeatherInfo } from "../models/weatherInfo.model.js"
-
-
 
 const getCitiesWeather = asyncHandler(async (req,res) => {
     let cityList = req.query.cities ? Array.isArray(req.query.cities) ? req.query.cities : [req.query.cities]
@@ -18,6 +16,7 @@ const getCitiesWeather = asyncHandler(async (req,res) => {
         
         citiesData.push({name:city,data:extractWeatherParameters({weatherData:completeCityData})})
     }
+    
     return res.
     status(201).
     json(new APIResponse(200,citiesData,"Data fetched successfully."))
