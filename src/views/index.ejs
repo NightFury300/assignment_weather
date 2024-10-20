@@ -6,63 +6,77 @@
     <title>Weather API</title>
     <style>
         body {
-            font-family: Arial, sans-serif; 
-            background-color: #f0f0f0; 
-            color: #333; 
-            margin: 0; 
-            padding: 20px; 
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f7;
+            color: #333;
+            margin: 0;
+            padding: 20px;
         }
 
         #container {
             display: flex;
             flex-direction: column;
-            gap: 15px; 
-            max-width: 600px; 
-            margin: auto; 
+            gap: 15px;
+            max-width: 600px;
+            margin: auto;
         }
 
         .city-card {
-            border: 1px solid #ccc; 
-            padding: 15px; 
-            border-radius: 8px; 
-            background-color: #fff; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-            transition: transform 0.2s; 
+            border: 2px solid #3498db;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
         }
 
         .city-card:hover {
-            transform: translateY(-3px); 
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background-color: #eaf2f8;
         }
 
         h2 {
-            margin: 0 0 10px; 
-            font-size: 24px; 
-            color: #2c3e50; 
+            margin: 0 0 10px;
+            font-size: 24px;
+            color: #2980b9;
         }
 
         p {
-            margin: 5px 0; 
-            font-size: 16px; 
-            color: #555; 
+            margin: 5px 0;
+            font-size: 16px;
+            color: #555;
         }
 
         strong {
-            color: #e74c3c; 
+            color: #e74c3c;
         }
 
         #unitToggle {
-            margin-bottom: 15px; 
-            padding: 10px; 
-            background-color: #3498db; 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
         #unitToggle:hover {
-            background-color: #2980b9; 
+            background-color: #27ae60;
+        }
+
+        .threshold-input input {
+            margin-right: 5px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        .threshold-input {
+            display: flex;
+            flex-direction: column;
         }
     </style>
 </head>
@@ -81,9 +95,10 @@
         let currentUnit = 'Celsius';
         updateWeatherData();
         setInterval(updateWeatherData, 300000);
-
+        const alertCounter = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+        const thresholds = []
         async function getData() {
-            const cities = ['Delhi', 'Chennai', 'Mumbai', 'Bangalore', 'Kolkata', 'Hyderabad'];
+            const cities = getCities();
             let queryString = "";
             let index = 0;
             for (const element of cities) {                
@@ -97,28 +112,74 @@
             const data = await response.json();
             return data;
         }
-
+        function getCities(){
+            const cities = ['Delhi', 'Chennai', 'Mumbai', 'Bangalore', 'Kolkata', 'Hyderabad'];
+            return cities;
+        }
         async function updateWeatherData(save = true) {
             const apiRes = await getData();
             const citiesData = apiRes.data;
             formatWeatherData(citiesData);
+            updateAlertCounter(citiesData);
             if(save)
                 saveWeatherData(citiesData);
         }
-        function formatWeatherData(citiesData){
+        function formatWeatherData(citiesData) {
             citiesData.forEach(cityData => {
-                const lastUpdatedAtString = getLastUpdatedAt(cityData.data.dt);
-                const temp = convertTemperature(currentUnit, cityData.data.temp);
-                const feels_like = convertTemperature(currentUnit, cityData.data.feels_like);
-                document.getElementById(cityData.name).innerHTML = 
-                `<h2>${cityData.name}</h2>
+            const cityId = cityData.name;
+            const lastUpdatedAtString = getLastUpdatedAt(cityData.data.dt);
+            const temp = convertTemperature(currentUnit, cityData.data.temp);
+            const feels_like = convertTemperature(currentUnit, cityData.data.feels_like);
+
+            thresholds[cityId] = thresholds[cityId] || {
+                tempThreshold: 0,
+                tempCount: 0,
+                conditionThreshold: '',
+                conditionCount: 0
+            };
+
+            document.getElementById(cityId).innerHTML = `
+                <h2>${cityData.name}</h2>
                 <p>Temperature: <strong>${temp}</strong></p>
                 <p>Feels Like: <strong>${feels_like}</strong></p>
                 <p>Condition: <strong>${cityData.data.main}</strong></p>
-                <p>Last Updated At: <strong>${lastUpdatedAtString}</strong></p>`;
+                <p>Last Updated At: <strong>${lastUpdatedAtString}</strong></p>
+
+                <div class="threshold-input">
+                    <input type="number" id="${cityId}-temp-threshold" value="${thresholds[cityId].tempThreshold}" placeholder="Temp Threshold">
+                    <input type="number" id="${cityId}-temp-count" value="${thresholds[cityId].tempCount}" placeholder="Temp Count">
+                </div>
+                <div class="threshold-input">
+                    <input type="text" id="${cityId}-condition-threshold" value="${thresholds[cityId].conditionThreshold}" placeholder="Condition Threshold">
+                    <input type="number" id="${cityId}-condition-count" value="${thresholds[cityId].conditionCount}" placeholder="Condition Count">
+                </div>
+                `;
+
+                document.getElementById(`${cityId}-temp-threshold`).addEventListener('input', function () {
+                thresholds[cityId].tempThreshold = this.value || 0;            
+                });
+                document.getElementById(`${cityId}-temp-count`).addEventListener('input', function () {
+                thresholds[cityId].tempCount = this.value || 0;
+                });
+                document.getElementById(`${cityId}-condition-threshold`).addEventListener('input', function () {
+                thresholds[cityId].conditionThreshold = this.value || '';
+                });
+                document.getElementById(`${cityId}-condition-count`).addEventListener('input', function () {
+                thresholds[cityId].conditionCount = this.value || 0;
+                });
             });
         }
+
         function convertTemperature(unit, value) {
+            if (unit === 'Kelvin') {
+                if (currentUnit === 'Celsius') {
+                    return Number(value) + 273.15;
+                } 
+                else if (currentUnit === 'Fahrenheit') {
+                    return (Number(value) - 32) * 5 / 9 + 273.15;
+                }
+            }
+
             if (!['Celsius', 'Fahrenheit'].includes(unit))
                 throw Error("Invalid Temperature Unit Provided");
             if (unit === 'Celsius') {
@@ -154,6 +215,42 @@
             })
             if(!response)
                 throw new Error("Something went wrong.")
+        }
+
+        function updateAlertCounter(citiesData){
+            
+            const cities = getCities();
+            citiesData.forEach(city => {
+                const idx = cities.indexOf(city.name);
+                
+                if(city.data.temp >= convertTemperature('Kelvin',thresholds[city.name].tempThreshold)  && thresholds[city.name].tempCount > 0)
+                    alertCounter[idx][0]++;
+                else
+                    alertCounter[idx][0] = 0;
+                if(city.data.main == thresholds[city.name].conditionThreshold && thresholds[city.name].conditionCount > 0)
+                    alertCounter[idx][1]++;
+                else
+                    alertCounter[idx][1] = 0;
+            })
+            
+            checkForAlerts(citiesData);
+        }
+
+        function checkForAlerts(citiesData){
+            const cities = getCities();
+            citiesData.forEach(city => {
+                const idx = cities.indexOf(city.name); 
+                if(alertCounter[idx][0] >= thresholds[city.name].tempCount && thresholds[city.name].tempCount > 0)
+                    sendAlert(`Temperature Alert for ${cities[idx]}`)
+                if(alertCounter[idx][1] >= thresholds[city.name].conditionCount && thresholds[city.name].conditionCount > 0)
+                    sendAlert(`Condition Alert for ${cities[idx]}`)
+            });
+        }
+
+        function sendAlert(message)
+        {
+            alert(message)
+            
         }
 
         document.getElementById('unitToggle').addEventListener('click', function() {
