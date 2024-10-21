@@ -1,5 +1,7 @@
 # Weather API Web Application
 
+[Github Page](https://github.com/NightFury300/assignment_weather)
+
 This is a web-based application for displaying and managing weather data for various cities. Users can view real-time weather information, set thresholds for temperature and conditions, and receive alerts based on the specified criteria. The application fetches weather data from an external API and provides a user-friendly interface to interact with the data.
 
 ## Features
