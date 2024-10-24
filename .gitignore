@@ -116,9 +116,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# dotenv environment variables file
-.env
-.env.test
-.env.production
-
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node

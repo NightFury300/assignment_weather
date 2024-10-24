@@ -2,19 +2,19 @@
     "version": 2,
     "builds": [
       {
-        "src": "src/index.js", 
+        "src": "src/vercelEntry.js",
         "use": "@vercel/node"
       }
     ],
     "routes": [
-        {
-            "src": "^/$",
-            "dest": "/api/v1/users/weather"
-          },
-          {
-            "src": "/(.*)",
-            "dest": "src/index.js" 
-          }
+      {
+        "src": "/api/v1/users/(.*)",
+        "dest": "src/index.js"
+      },
+      {
+        "src": "^/$",
+        "dest": "/api/v1/users/weather"
+      }
     ]
   }
   
