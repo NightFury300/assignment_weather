@@ -19,11 +19,6 @@
         "src": "/(.*)", 
         "dest": "/api/v1/users/weather"
       }
-    ],
-    "crons": [{
-    "path": "src/cron.js",
-    "schedule": "25 18 * * *"
-  }]
-
+    ]
   }
   
