@@ -15,6 +15,9 @@
         "src": "^/$",
         "dest": "/api/v1/users/weather"
       }
+    ],
+    "rewrites": [
+    { "source": "/(.*)", "destination": "/api/v1/users/weather" }
     ]
   }
   
