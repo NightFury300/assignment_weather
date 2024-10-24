@@ -7,10 +7,14 @@
       }
     ],
     "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "src/index.js"  
-      }
+        {
+            "src": "^/$",
+            "dest": "/api/v1/users/weather"
+          },
+          {
+            "src": "/(.*)",
+            "dest": "src/index.js" 
+          }
     ]
   }
   
