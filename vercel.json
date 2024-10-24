@@ -12,8 +12,8 @@
             "dest": "/api/v1/users/weather"
           },
           {
-            "src": "/(.*)",
-            "dest": "src/index.js" 
+            "src": "/api/v1/users/(.*)",
+            "dest": "src/index.js"
           }
     ]
   }
