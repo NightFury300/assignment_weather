@@ -23,7 +23,7 @@
     "crons": [
     {
       "path": "/src/cron.js",
-      "schedule": "00 07 * * *"
+      "schedule": "14 07 * * *"
     }
   ]
   }
