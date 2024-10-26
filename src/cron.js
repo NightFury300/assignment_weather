@@ -1,3 +1,5 @@
+import {rollUpWeatherData} from "./utils/weatherUtils.js"
+
 export default async () => {
     console.log("Rolling up data");
     const summary = await rollUpWeatherData()
