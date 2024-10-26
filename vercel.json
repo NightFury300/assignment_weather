@@ -22,7 +22,7 @@
     ],
     "crons": [
     {
-      "path": "./src/cron.js",
+      "path": "/api/v1/users/cron",
       "schedule": "00 08 * * *"
     }
   ]
