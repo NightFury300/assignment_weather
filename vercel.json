@@ -22,8 +22,8 @@
     ],
     "crons": [
     {
-      "path": "/api/v1/users/cron",
-      "schedule": "34 07 * * *"
+      "path": "/api/v1/users/save-weather-data",
+      "schedule": "39 07 * * *"
     }
   ]
   }
