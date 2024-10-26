@@ -19,12 +19,6 @@
         "src": "/(.*)", 
         "dest": "/api/v1/users/weather"
       }
-    ],
-    "crons": [
-    {
-      "path": "/api/v1/users/save-weather-data",
-      "schedule": "39 07 * * *"
-    }
-  ]
+    ]
   }
   
