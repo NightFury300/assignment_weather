@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getCitiesWeather,saveWeatherData } from "../controllers/user.controller.js";
 import { APIResponse } from "../utils/APIResponse.js";
+import { rollUpWeatherData } from "../utils/weatherUtils.js";
 const router = Router()
 
 router.route("/weather").get((req,res) => {
