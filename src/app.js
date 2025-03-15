@@ -33,5 +33,8 @@ const job = cron.schedule('55 23 * * *',async () => {
 import userRouter from "./routes/user.routes.js"
 
 app.use("/api/v1/users",userRouter)
+app.use("/",(req,res) => {
+    res.render("index");
+})
 
 export {app}

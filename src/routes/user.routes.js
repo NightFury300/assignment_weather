@@ -5,9 +5,6 @@ import { rollUpWeatherData } from "../utils/weatherUtils.js";
 import { APIError } from "../utils/APIError.js";
 const router = Router()
 
-router.route("/weather").get((req,res) => {
-    res.render("index");
-});
 router.route("/get-weather-data").get(getCitiesWeather);
 router.route("/save-weather-data").post(saveWeatherData);
 router.route("/roll-up-weather-data").get(async (req,res) => {
