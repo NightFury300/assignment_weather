@@ -14,7 +14,7 @@ app.use(express.json({limit:"16kb"}))
 app.use(express.urlencoded({extended:true,limit:"16kb"}))
 
 app.set("view engine","ejs");
-app.set("views","./views");
+app.set("views", path.resolve(__dirname, "src", "views"));
 
 const job = cron.schedule('55 23 * * *',async () => {
     console.log("Rolling up data");
