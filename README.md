@@ -1,6 +1,6 @@
 # Weather API Web Application
 
-[Live Project](https://assignment-weather-green.vercel.app/api/v1/users/weather)  
+[Live Project](https://climatrack-yo74.onrender.com/)  
 
 [Github Page](https://github.com/NightFury300/assignment_weather)
 
