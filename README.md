@@ -1,6 +1,6 @@
 # Weather API Web Application
 
-[Live Project](https://climatrack-yo74.onrender.com/)  
+[Live Project](https://climatrack-vy7q.onrender.com)  
 
 [Github Page](https://github.com/NightFury300/assignment_weather)
 
